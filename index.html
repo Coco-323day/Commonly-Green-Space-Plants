@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国主要气候带城市绿地常用植物</title>
+    <!-- 引入 Font Awesome 用于图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c5f2d; /* 深绿色 - 主题色 */
+            --secondary-color: #97bc62; /* 浅绿色 - 辅助色 */
+            --accent-color: #66bb6a; /* 强调色 */
+            --bg-color: #f8f9fa; /* 背景色 */
+            --card-bg: #ffffff; /* 卡片背景 */
+            --text-main: #333333; /* 主要文字 */
+            --text-secondary: #666666; /* 次要文字 */
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 头部样式 */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1a3c1a 100%);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem;
+        }
+
+        /* 气候带网格 (2x2) */
+        .climate-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 气候卡片样式 */
+        .climate-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .climate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .climate-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .climate-card p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* 列表容器 */
+        #plant-list-container {
+            display: none; /* 默认隐藏 */
+            margin-top: 2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            background: #1e4220;
+        }
+
+        /* 植物网格 */
+        .plant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* 植物卡片 */
+        .plant-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid #eee;
+        }
+
+        .plant-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-content {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plant-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .plant-scientific-name {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .btn-detail {
+            display: block;
+            width: 100%;
+            padding: 0.6rem;
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .btn-detail:hover {
+            background-color: #1e4220;
+        }
+
+        /* 加载与错误状态 */
+        #loading, #error-msg {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        #error-msg {
+            display: none;
+            background: #ffe6e6;
+            border-radius: var(--radius);
+            margin: 1rem;
+        }
+
+        /* 模态框样式 (详情页) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 25px rgba(0,0,0,0.2);
+            position: relative;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-title h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-title span {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #dc3545;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .detail-image-container {
+            width: 100%;
+            max-height: 400px;
+            margin-bottom: 2rem;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .detail-image {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .info-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 1.1rem;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 0.75rem;
+        }
+
+        .info-value {
+            color: var(--text-main);
+            text-align: justify;
+            line-height: 1.8;
+            background: #fdfdfd;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .climate-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 0 0.5rem 3rem;
+            }
+            
+            .plant-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>中国主要气候带城市绿地常用植物</h1>
+        <p>Common Plants in Urban Green Spaces of Major Climatic Zones in China</p>
+    </header>
+
+    <div class="container">
+        <!-- 气候带选择页 -->
+        <div id="climate-home">
+            <div class="climate-grid">
+                <!-- 气候带 1: 温带大陆性半湿润季风气候 -->
+                <div class="climate-card" data-climate="Temperate" data-json="温带大陆性半湿润季风气候城市绿地常用植物-网页展示.json">
+                    <h3>温带大陆性半湿润季风气候</h3>
+                    <p>Temperate Continental Monsoon Climate</p>
+                </div>
+                
+                <!-- 气候带 2: 暖温带半湿润半干旱季风气候 -->
+                <div class="climate-card" data-climate="Warmtemperate" data-json="暖温带半湿润半干旱季风气候城市绿地常用植物-网页展示.json">
+                    <h3>暖温带半湿润半干旱季风气候</h3>
+                    <p>Warm Temperate Semi-humid Climate</p>
+                </div>
+                
+                <!-- 气候带 3: 亚热带季风气候 -->
+                <div class="climate-card" data-climate="Subtropical" data-json="亚热带季风气候城市绿地常用植物-网页展示.json">
+                    <h3>亚热带季风气候</h3>
+                    <p>Subtropical Monsoon Climate</p>
+                </div>
+                
+                <!-- 气候带 4: 热带季风气候 -->
+                <div class="climate-card" data-climate="Tropical" data-json="热带季风气候城市绿地常用植物-网页展示.json">
+                    <h3>热带季风气候</h3>
+                    <p>Tropical Monsoon Climate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 植物列表页 -->
+        <div id="plant-list-container">
+            <button class="back-btn" id="back-to-home"><i class="fas fa-arrow-left"></i> 返回气候选择</button>
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);" id="list-title"></h2>
+            <div id="loading">正在加载植物数据...</div>
+            <div id="error-msg"></div>
+            <div id="plant-list" class="plant-grid">
+                <!-- 植物卡片将通过 JS 插入这里 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div id="detail-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h2 id="modal-name">植物名称</h2>
+                    <span id="modal-scientific">Scientific Name</span>
+                </div>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-image-container" class="detail-image-container" style="display: none;">
+                    <img id="modal-image" src="" alt="植物图片" class="detail-image">
+                </div>
+                <div id="modal-details">
+                    <!-- 详细信息将通过 JS 插入 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentData = [];
+        let currentClimate = '';
+        let currentImageFolder = '';
+
+        // DOM 元素
+        const climateHome = document.getElementById('climate-home');
+        const plantListContainer = document.getElementById('plant-list-container');
+        const listTitle = document.getElementById('list-title');
+        const plantList = document.getElementById('plant-list');
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error-msg');
+        const backBtn = document.getElementById('back-to-home');
+
+        // 1. 绑定气候卡片点击事件
+        document.querySelectorAll('.climate-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const climateName = card.getAttribute('data-climate');
+                const jsonFile = card.getAttribute('data-json');
+                currentClimate = climateName;
+                currentImageFolder = climateName; // 图片文件夹名与气候带英文名一致
+                loadClimateData(jsonFile);
+            });
+        });
+
+        // 2. 返回首页
+        backBtn.addEventListener('click', () => {
+            plantListContainer.style.display = 'none';
+            climateHome.style.display = 'block';
+            document.title = "中国主要气候带城市绿地常用植物";
+        });
+
+        // 3. 加载对应气候带的 JSON 数据
+        async function loadClimateData(jsonFileName) {
+            try {
+                // 重置状态
+                loadingEl.style.display = 'block';
+                errorEl.style.display = 'none';
+                plantList.innerHTML = '';
+                document.title = `正在加载: ${jsonFileName}`;
+
+                // 获取数据
+                const response = await fetch(jsonFileName);
+                if (!response.ok) throw new Error(`HTTP ${response.status}: 请检查文件名或网络`);
+
+                const jsonData = await response.json();
+                
+                // 假设数据在 Sheet1 中，且第一行为表头
+                if (jsonData.Sheet1 && Array.isArray(jsonData.Sheet1)) {
+                    // 过滤掉表头行 (通常第一行是 "植物种" 字样)
+                    currentData = jsonData.Sheet1.filter(item => item['Unnamed: 1'] && item['Unnamed: 1'] !== '植物种');
+                    
+                    // 更新页面标题
+                    listTitle.textContent = document.querySelector(`.climate-card[data-json="${jsonFileName}"] h3`).textContent;
+                    
+                    // 渲染列表
+                    renderPlantList(currentData);
+                    
+                    // 切换显示
+                    climateHome.style.display = 'none';
+                    plantListContainer.style.display = 'block';
+                } else {
+                    throw new Error("JSON 数据格式错误，未找到 Sheet1");
+                }
+            } catch (error) {
+                console.error('加载失败:', error);
+                loadingEl.style.display = 'none';
+                errorEl.textContent = `数据加载失败: ${error.message}`;
+            }
+        }
+
+        // 4. 渲染植物列表
+        function renderPlantList(data) {
+            loadingEl.style.display = 'none';
+            plantList.innerHTML = '';
+            
+            if (data.length === 0) {
+                plantList.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary);">暂无植物数据</p>';
+                return;
+            }
+
+            data.forEach((plant, index) => {
+                const name = plant['Unnamed: 1'] || '未知植物';
+                const scientific = plant['Unnamed: 3'] || '';
+                const imagePath = plant['Unnamed: 2']; // 假设 Unnamed: 2 是图片文件名
+                const fullImagePath = imagePath ? `${currentImageFolder}/${imagePath}` : null;
+
+                const card = document.createElement('div');
+                card.className = 'plant-card';
+
+                // 图片占位符逻辑
+                let imageHtml = '';
+                if (fullImagePath) {
+                    imageHtml = `<div class="card-image-container">
+                        <img src="${fullImagePath}" alt="${name}" class="card-image" onerror="this.parentElement.innerHTML='<div style=\\'font-size:3rem; color:#ddd;\\'><i class=\\'fas fa-image\\'></i></div>'">
+                    </div>`;
+                }
+
+                card.innerHTML = `
+                    ${imageHtml}
+                    <div class="card-content">
+                        <h3 class="plant-name">${name}</h3>
+                        <p class="plant-scientific-name">${scientific}</p>
+                        <button class="btn-detail" onclick="showDetail(${index})">
+                            <i class="fas fa-info-circle"></i> 查看详情
+                        </button>
+                    </div>
+                `;
+                plantList.appendChild(card);
+            });
+        }
+
+        // 5. 显示详情模态框 (挂载到 window 对象以便 HTML 调用)
+        window.showDetail = function(index) {
+            const plant = currentData[index];
+            if (!plant) return;
+
+            const modal = document.getElementById('detail-modal');
+            const modalName = document.getElementById('modal-name');
+            const modalSci = document.getElementById('modal-scientific');
+            const modalImgContainer = document.getElementById('modal-image-container');
+            const modalImg = document.getElementById('modal-image');
+            const modalDetails = document.getElementById('modal-details');
+
+            // 填充基础信息
+            modalName.textContent = plant['Unnamed: 1'] || '未知植物';
+            modalSci.textContent = plant['Unnamed: 3'] || '';
+
+            // 处理图片
+            const imagePath = plant['Unnamed: 2'];
+            if (imagePath) {
+                modalImg.src = `${currentImageFolder}/${imagePath}`;
+                modalImgContainer.style.display = 'block';
+                
+                // 图片加载失败处理
+                modalImg.onerror = function() {
+                    modalImgContainer.style.display = 'none';
+                };
+            } else {
+                modalImgContainer.style.display = 'none';
+            }
+
+            // 动态生成详细字段 (映射 JSON 中的字段)
+            // 你可以根据实际 JSON 的表头调整这里的映射关系
+            const fieldMap = {
+                'Unnamed: 1': '植物种',
+                'Unnamed: 3': '学名',
+                'Unnamed: 4': '别名',
+                'Unnamed: 5': '分类系统',
+                'Unnamed: 6': '分布',
+                'Unnamed: 7': '形态特征',
+                'Unnamed: 8': '特性及价值',
+                'Unnamed: 9': '适宜生境'
+            };
+
+            let detailsHtml = '';
+            for (const [key, label] of Object.entries(fieldMap)) {
+                // 跳过已经在头部显示的名称
+                if (key === 'Unnamed: 1' || key === 'Unnamed: 3') continue;
+                
+                const value = plant[key];
+                if (value && value !== '/' && value.trim() !== '') {
+                    detailsHtml += `
+                        <div class="info-section">
+                            <span class="info-label">${label}</span>
+                            <div class="info-value">${value}</div>
+                        </div>
+                    `;
+                }
+            }
+            modalDetails.innerHTML = detailsHtml;
+
+            // 显示模态框
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        // 6. 关闭模态框
+        window.closeModal = function() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // 清空图片防止缓存问题
+            const img = document.getElementById('modal-image');
+            if (img) img.src = '';
+        };
+
+        // 7. 点击遮罩层关闭
+        document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // 8. ESC 键关闭
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
